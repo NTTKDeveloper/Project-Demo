@@ -16,5 +16,5 @@
 * Ram 8gb.
 * Card Onboard.
 
-# Mô tả: 
+# III. Mô tả: 
 * Thức dậy trong một rừng chuối, không gian lặp đi lặp lại sao mỗi lần lặp thì cảnh sắc bị thay đổi đi. Và bạn không nhớ tại sao mình lại ở đây? Nguồn sáng duy nhất mà bạn có là một chiếc đền ló trên đầu. Và thứ gì đang chờ bạn phía trước.
