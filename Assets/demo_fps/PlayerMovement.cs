@@ -10,14 +10,15 @@ public class PlayerMovement : MonoBehaviour
     public float minVerticalRotation = -80f;
     public float maxVerticalRotation = 80f;
 
-    // [Header("Stamina Settings")]
-    // public float maxStamina = 100f;
-    // public float normalRechargeRate = 5f;        // Normal recharge rate per second
-    // public float depletedRechargeRate = 10f;    // Increased recharge rate after depletion
-    // public float staminaDepletionRate = 10f;    // Stamina depletion rate per second
-    // public float depletedRechargeDuration = 5f;  // Duration for increased recharge after depletion
-    // [SerializeField] private float currentStamina;
-    // private float depletedRechargeTimer;
+    [Header("Stamina Settings")]
+    public float maxStamina = 100f;
+    public float normalRechargeRate = 5f;        // Normal recharge rate per second
+    public float staminaDepletionRate = 10f;    // Stamina depletion rate per second
+    public float depletedRechargeDuration = 5f;  // Duration for increased recharge after depletion
+    
+    //For debug purposes
+    [SerializeField] private float currentStamina;
+    [SerializeField]private float depletedRechargeTimer;
 
     private float sprintInputValue;
     private CharacterController characterController;
@@ -30,7 +31,7 @@ public class PlayerMovement : MonoBehaviour
         characterController = GetComponent<CharacterController>();
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false; // Invisible Cursor
-        // currentStamina = maxStamina;
+        currentStamina = maxStamina;
     }
 
     private void Update()
@@ -63,36 +64,43 @@ public class PlayerMovement : MonoBehaviour
         Vector3 moveDirection = (forward * movementInput.y) + (right * movementInput.x);
         moveDirection.Normalize();
 
-        characterController.SimpleMove(moveDirection * speed); //This is a placeholder as the stamina is under construction
+        // characterController.SimpleMove(moveDirection * speed); //This is a placeholder as the stamina is under construction
                 
-        // // Check if Sprint action is engaged and there is enough stamina
-        // if (sprintInputValue == 1 && currentStamina > 0)
+        // Check if Sprint action is engaged WASD is pressed ,and there is enough stamina
+        if (sprintInputValue == 1f && (movementInput.y == 1f || movementInput.x == 1f) && currentStamina > 0 && depletedRechargeTimer == 0)
+        {
+            characterController.SimpleMove(moveDirection * (speed * 2)); // Double speed
+            // Deplete stamina faster when sprinting
+            currentStamina = Mathf.Clamp(currentStamina - (staminaDepletionRate * Time.deltaTime), 0f, maxStamina);
+        }
+        else if ((sprintInputValue != 1f) || (currentStamina > 0 && depletedRechargeTimer == 0))
+        {
+            characterController.SimpleMove(moveDirection * speed);
+            currentStamina = Mathf.Clamp(currentStamina + ((normalRechargeRate) * Time.deltaTime), 0f, maxStamina);
+        }
+        
+        // Handle stamina depletion and recharge duration
+        if (currentStamina == 0)
+        {
+            // If stamina is depleted, start or reset the depleted recharge timer                   
+            Debug.Log("Out of Stamina");
+            //  characterController.SimpleMove(moveDirection * (0.75f * speed)); // Reduced speed     
+            //  depletedRechargeTimer = depletedRechargeDuration;                      
+        }
+        // if (depletedRechargeTimer > 0)
         // {
-        //     characterController.SimpleMove(moveDirection * (speed * 2)); // Double speed
-        //     // Deplete stamina faster when sprinting
-        //     currentStamina = Mathf.Clamp(currentStamina - (staminaDepletionRate * 2 * Time.deltaTime), 0f, maxStamina);
-        // }
-        // else if (currentStamina > 0)
-        // {
-        //     characterController.SimpleMove(moveDirection * speed);
+        //     // During the timer, recharge at an increased rate
+        //     currentStamina = Mathf.Clamp(currentStamina + ((normalRechargeRate*1.25f) * Time.deltaTime), 0f, maxStamina);
+        //     depletedRechargeTimer -= Time.deltaTime;
+        //     if (depletedRechargeTimer < 0)
+        //     {
+        //         depletedRechargeDuration = 0;
+        //     }
         // }
         // else
         // {
-        //     Debug.Log("Out of Stamina");
-        //     characterController.SimpleMove(moveDirection * (0.75f * speed)); // Reduced speed
-        // }
-
-        // // Handle stamina depletion and recharge duration
-        // if (currentStamina == 0)
-        // {
-        //     // If stamina is depleted, start or reset the depleted recharge timer                   
-        //     depletedRechargeTimer = depletedRechargeDuration;                      
-        // }
-        // if (depletedRechargeTimer != 0)
-        // {
-        //     // During the timer, recharge at an increased rate
-        //     currentStamina = Mathf.Clamp(currentStamina + (depletedRechargeRate * Time.deltaTime), 0f, maxStamina);
-        //     depletedRechargeTimer -= Time.deltaTime;
+        //     characterController.SimpleMove(moveDirection * speed);
+        //     currentStamina = Mathf.Clamp(currentStamina + ((normalRechargeRate) * Time.deltaTime), 0f, maxStamina);
         // }
     }
 

@@ -370,7 +370,7 @@ CapsuleCollider:
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 2
   m_Radius: 0.5
   m_Height: 2
@@ -454,16 +454,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fc35620e0a34e3a4b867e7663dc1a228, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 5
-  rotationSpeed: 10
+  speed: 3
+  rotationSpeed: 8
   minVerticalRotation: -89
   maxVerticalRotation: 89
   maxStamina: 100
   normalRechargeRate: 5
-  depletedRechargeRate: 10
   staminaDepletionRate: 10
   depletedRechargeDuration: 5
   currentStamina: 0
+  depletedRechargeTimer: 0
 --- !u!143 &151661653
 CharacterController:
   m_ObjectHideFlags: 0
@@ -502,7 +502,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b7c9b3ad2e45998488434ddc6782f2fe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  jumpHeight: 6
+  jumpHeight: 8
 --- !u!114 &151661656
 MonoBehaviour:
   m_ObjectHideFlags: 0
