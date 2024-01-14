@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 5214762443279095011}
   - component: {fileID: 3762796602438640704}
   - component: {fileID: 3598137272513852543}
+  - component: {fileID: 5147106465382968653}
   m_Layer: 0
   m_Name: Bananatree
   m_TagString: Untagged
@@ -29,7 +30,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 5, y: 5, z: 5}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1588512179753727244}
@@ -101,6 +102,29 @@ MonoBehaviour:
   storedPrefabBackupGUID: 7c4c94722b9f01c469e521c1004ee187
   storedPreset: Tools/Tree It;Vegetation
   storedOverrides: 
+--- !u!136 &5147106465382968653
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3838711805676153972}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.12456747
+  m_Height: 1.1551981
+  m_Direction: 1
+  m_Center: {x: -0.04956039, y: 0.61622906, z: 0.024133286}
 --- !u!1 &6688358377779427231
 GameObject:
   m_ObjectHideFlags: 0

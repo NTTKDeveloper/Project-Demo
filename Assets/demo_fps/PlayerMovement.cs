@@ -1,3 +1,6 @@
+using System;
+using System.Threading;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -6,43 +9,55 @@ public class PlayerMovement : MonoBehaviour
 {
     [Header("Movement Settings")]
     public float speed = 5f;
+    [SerializeField] private float currentspeed;
     public float rotationSpeed = 10f;
     public float minVerticalRotation = -80f;
-    public float maxVerticalRotation = 80f;
+    public float maxVerticalRotation = 80;
 
     [Header("Stamina Settings")]
     public float maxStamina = 100f;
-    public float normalRechargeRate = 5f;        // Normal recharge rate per second
-    public float staminaDepletionRate = 10f;    // Stamina depletion rate per second
-    public float depletedRechargeDuration = 5f;  // Duration for increased recharge after depletion
-    
-    //For debug purposes
+    public float reducStamina = 1f;
+    public float increaseStamina = 0.001f;
     [SerializeField] private float currentStamina;
-    [SerializeField]private float depletedRechargeTimer;
 
-    private float sprintInputValue;
+    [Header("Mouse Settings")]
     private CharacterController characterController;
     private Vector2 movementInput;
     private Vector2 mouseLookInput;
     private float verticalRotation = 0f;
 
-    private void Awake()
+    [Header("Jump Settings")]
+    [SerializeField] private float jumpHeight = 5f;
+    private Vector3 velocity = new Vector3(0f, 0f, 0f);
+    private float JumpInputValue;
+    public float gravity = 0.5f;
+    private float _yVelocity;
+
+    //Dung start se toi uu hon sai Awake
+    private void Start()
     {
         characterController = GetComponent<CharacterController>();
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false; // Invisible Cursor
+        currentspeed = speed;
         currentStamina = maxStamina;
     }
 
     private void Update()
     {
-        UpdateStaminaAndMovePlayer();
+        JumpMovePlayer();
         RotatePlayerWithMouse();
+        speed = SetSpeed(speed);
+    }
+
+    private void FixedUpdate() {
+        currentStamina = StaminaManager(currentStamina);
     }
 
     private void OnMove(InputValue value)
     {
         movementInput = value.Get<Vector2>();
+        // Debug.Log(movementInput);
     }
 
     private void OnLook(InputValue value)
@@ -50,58 +65,69 @@ public class PlayerMovement : MonoBehaviour
         mouseLookInput = value.Get<Vector2>();
     }
 
-    private void OnSprint(InputValue value)
+    private void OnJump(InputValue value)
     {
-        sprintInputValue = value.Get<float>();
-        // Use sprintInputValue as needed (it will be non-zero when LeftShift is pressed)
+        JumpInputValue = value.Get<float>();
+        Debug.Log(JumpInputValue);
+    }
+    private float StaminaManager(float currentStamina)
+    {
+        if((currentStamina <= 0 || currentStamina < maxStamina) && speed == 3){
+            // Debug.Log("Cong");
+            currentStamina += increaseStamina; 
+        }else if(speed == 6){
+            Debug.Log("Tru");
+            currentStamina -= reducStamina;
+        }else if (currentStamina > maxStamina){
+            currentStamina = maxStamina;
+        }
+        return currentStamina;
+    }
+    private float SetSpeed(float speed)
+    {
+        if(currentStamina > 0.1f){
+            if (Input.GetKey(KeyCode.W))
+            {
+                if (Input.GetKeyDown(KeyCode.LeftShift))
+                {
+                    speed *= 2;
+                }
+                else if (Input.GetKeyUp(KeyCode.LeftShift))
+                {
+                    speed = currentspeed;
+                }
+            } else if (Input.GetKeyUp(KeyCode.W))
+            {
+                speed = currentspeed;
+            }
+        }else if (currentStamina <= 0.1){
+            speed = currentspeed;
+        }
+        return speed;
     }
 
-    private void UpdateStaminaAndMovePlayer()
+    private void JumpMovePlayer()
     {
-        Vector3 forward = transform.TransformDirection(Vector3.forward);
-        Vector3 right = transform.TransformDirection(Vector3.right);
+        //Cai isGrounded doi khi se gay bug 
+        //Em doc them cai nay de hieu ro hon nhe https://forum.unity.com/threads/character-controller-why-is-isgrounded-always-at-false-when-the-player-is-not-moving.919994/
+        if (characterController.isGrounded)
+        {
+            Vector3 moveDirection = new Vector3(movementInput.x, 0f, movementInput.y).normalized;
+            velocity = transform.TransformDirection(moveDirection * speed);
+            if (JumpInputValue == 1)
+            {
+                JumpInputValue = 0;
+                _yVelocity = 0;
+                _yVelocity = jumpHeight;
+            }
+        }
+        else
+        {
+            _yVelocity -= gravity;
+        }
+        velocity.y = _yVelocity;
+        characterController.Move(velocity * Time.deltaTime);
 
-        Vector3 moveDirection = (forward * movementInput.y) + (right * movementInput.x);
-        moveDirection.Normalize();
-
-        // characterController.SimpleMove(moveDirection * speed); //This is a placeholder as the stamina is under construction
-                
-        // Check if Sprint action is engaged WASD is pressed ,and there is enough stamina
-        if (sprintInputValue == 1f && (movementInput.y == 1f || movementInput.x == 1f) && currentStamina > 0 && depletedRechargeTimer == 0)
-        {
-            characterController.SimpleMove(moveDirection * (speed * 2)); // Double speed
-            // Deplete stamina faster when sprinting
-            currentStamina = Mathf.Clamp(currentStamina - (staminaDepletionRate * Time.deltaTime), 0f, maxStamina);
-        }
-        else if ((sprintInputValue != 1f) || (currentStamina > 0 && depletedRechargeTimer == 0))
-        {
-            characterController.SimpleMove(moveDirection * speed);
-            currentStamina = Mathf.Clamp(currentStamina + ((normalRechargeRate) * Time.deltaTime), 0f, maxStamina);
-        }
-        
-        // Handle stamina depletion and recharge duration
-        if (currentStamina == 0)
-        {
-            // If stamina is depleted, start or reset the depleted recharge timer                   
-            Debug.Log("Out of Stamina");
-            //  characterController.SimpleMove(moveDirection * (0.75f * speed)); // Reduced speed     
-            //  depletedRechargeTimer = depletedRechargeDuration;                      
-        }
-        // if (depletedRechargeTimer > 0)
-        // {
-        //     // During the timer, recharge at an increased rate
-        //     currentStamina = Mathf.Clamp(currentStamina + ((normalRechargeRate*1.25f) * Time.deltaTime), 0f, maxStamina);
-        //     depletedRechargeTimer -= Time.deltaTime;
-        //     if (depletedRechargeTimer < 0)
-        //     {
-        //         depletedRechargeDuration = 0;
-        //     }
-        // }
-        // else
-        // {
-        //     characterController.SimpleMove(moveDirection * speed);
-        //     currentStamina = Mathf.Clamp(currentStamina + ((normalRechargeRate) * Time.deltaTime), 0f, maxStamina);
-        // }
     }
 
     private void RotatePlayerWithMouse()

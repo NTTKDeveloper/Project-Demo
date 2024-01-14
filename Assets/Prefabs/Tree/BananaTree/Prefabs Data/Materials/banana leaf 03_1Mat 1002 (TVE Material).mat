@@ -11,15 +11,17 @@ Material:
   m_Shader: {fileID: 4800000, guid: 7befaa6f41d00a6478d5f4af21d66518, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
-  m_ValidKeywords: []
+  m_ValidKeywords:
+  - TVE_ALPHA_CLIP
   m_InvalidKeywords: []
   m_LightmapFlags: 0
   m_EnableInstancingVariants: 1
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: 2000
+  m_CustomRenderQueue: 2450
   stringTagMap:
     NatureRendererInstancing: true
     RenderType: AlphaTest
+    UseExternalSettings: true
   disabledShaderPasses:
   - TransparentBackface
   - TransparentBackfaceDebugDisplay
@@ -183,13 +185,13 @@ Material:
     - _PerspectiveNoiseValue: 0
     - _PerspectivePushValue: 0
     - _RenderAmbient: 1
-    - _RenderClip: 0
+    - _RenderClip: 1
     - _RenderCoverage: 0
-    - _RenderCull: 2
+    - _RenderCull: 0
     - _RenderDecals: 0
     - _RenderDirect: 1
     - _RenderMode: 0
-    - _RenderNormals: 0
+    - _RenderNormals: 1
     - _RenderPriority: 0
     - _RenderQueue: 0
     - _RenderSSR: 0
@@ -237,7 +239,7 @@ Material:
     - _VertexVariationMode: 0
     - _emissive_intensity_value: 1
     - _render_coverage: 0
-    - _render_cull: 2
+    - _render_cull: 0
     - _render_dst: 0
     - _render_src: 1
     - _render_zw: 1
@@ -268,6 +270,6 @@ Material:
     - _SubsurfaceDiffusion_Asset: {r: -8.695931e+30, g: -5.0949594e+31, b: -0.010710085, a: -0.0000000055696536}
     - _VertexOcclusionColor: {r: 1, g: 1, b: 1, a: 0.5019608}
     - _VertexOcclusionRemap: {r: 0, g: 0, b: 0, a: 0}
-    - _render_normals: {r: -1, g: -1, b: -1, a: 0}
+    - _render_normals: {r: 1, g: 1, b: -1, a: 0}
     - _second_uvs_mode: {r: 1, g: 0, b: 0, a: 0}
   m_BuildTextureStacks: []
